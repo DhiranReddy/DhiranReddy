@@ -1,4 +1,4 @@
 <div align="center">
-  <img src="./assets/profile-dashboard.png" alt="Dhiran Reddy — Backend and Applied AI engineering dashboard" width="100%" />
+  <img src="./github-metrics.svg" alt="Dhiran Reddy — live GitHub engineering metrics" width="100%" />
 </div>
 
