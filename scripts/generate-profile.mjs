@@ -34,7 +34,7 @@ const days = weeks.flatMap(w => w.contributionDays);
 const totalContrib = user.contributionsCollection.contributionCalendar.totalContributions;
 const commitTotal = user.contributionsCollection.totalCommitContributions + user.contributionsCollection.restrictedContributionsCount;
 const accountYears = Math.max(1, Math.floor((Date.now() - new Date(user.createdAt)) / 31557600000));
-const projectDetails = await Promise.all(data.projects.map(async p => ({...p, ...(await api(`https://api.github.com/repos/${login}/${p.repo}`))})));
+const projectDetails = await Promise.all(data.projects.map(async p => ({...(await api(`https://api.github.com/repos/${login}/${p.repo}`)), ...p})));
 
 const text = (x,y,value,cls="t fg b",anchor="start") => `<text x="${x}" y="${y}" class="${cls}" text-anchor="${anchor}">${esc(value)}</text>`;
 const iconChip = (x,y,label,i) => `<g transform="translate(${x} ${y})"><rect width="${Math.max(42,label.length*8+16)}" height="24" rx="5" class="chip"/><text x="${Math.max(42,label.length*8+16)/2}" y="17" class="t s bold ${["green","blue","cyan","yellow"][i%4]}" text-anchor="middle">${esc(label)}</text></g>`;
@@ -43,7 +43,7 @@ const maxDay = Math.max(1,...days.map(d=>d.contributionCount));
 const calendar = days.map((d,i) => {const col=Math.floor(i/7), row=i%7, level=d.contributionCount?Math.max(1,Math.ceil(d.contributionCount/maxDay*4)):0; return `<rect x="${col*13}" y="${row*13}" width="10" height="10" rx="2" fill="${colors[level]}"><title>${d.date}: ${d.contributionCount} contributions</title></rect>`}).join("");
 let barX=0; const languageBar=languages.map(l=>{const w=440*l.percent/100; const s=`<rect x="${barX}" width="${w}" height="8" fill="${l.color}"/>`;barX+=w;return s}).join("");
 const languageLegend=languages.map((l,i)=>text(805+(i%3)*145,491+Math.floor(i/3)*20,`● ${l.name} ${l.percent}%`,`t muted s`)).join("");
-const techChips=data.technologies.map((v,i)=>iconChip(336+i*93,548,v,i)).join("");
+const techChips=data.technologies.map((v,i)=>iconChip(336+(i%4)*108,548+Math.floor(i/4)*32,v,i)).join("");
 const activityBars = days.slice(-24).map((d,i)=>`<rect x="${i*17}" y="${64-Math.max(3,d.contributionCount/maxDay*60)}" width="10" height="${Math.max(3,d.contributionCount/maxDay*60)}" rx="2" fill="#238636"><title>${d.date}: ${d.contributionCount}</title></rect>`).join("");
 
 const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640" role="img">
