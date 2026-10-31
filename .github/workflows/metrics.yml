@@ -15,51 +15,19 @@ concurrency:
 jobs:
   metrics:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 10
     steps:
-      - name: Generate Lowlighter Metrics profile
-        uses: lowlighter/metrics@latest
-        with:
-          token: ${{ secrets.METRICS_TOKEN }}
-          committer_token: ${{ secrets.GITHUB_TOKEN }}
-          user: DhiranReddy
-          filename: github-metrics.svg
-          template: classic
-          config_timezone: Asia/Kolkata
-          config_display: large
-          config_animations: yes
-          config_twemoji: yes
-          config_octicon: yes
-          config_order: base.header, pagespeed, isocalendar, repositories, languages, lines, base.activity+community+repositories+metadata
-          base: header, activity, community, repositories, metadata
-          base_indepth: yes
-          repositories_forks: yes
-          plugins_errors_fatal: no
-
-          # Hide this module until PAGESPEED_TOKEN exists instead of publishing
-          # an API quota error in the profile image.
-          plugin_pagespeed: ${{ secrets.PAGESPEED_TOKEN != '' }}
-          plugin_pagespeed_url: https://dhiranreddy.cyou
-          plugin_pagespeed_token: ${{ secrets.PAGESPEED_TOKEN }}
-          plugin_pagespeed_detailed: yes
-
-          plugin_isocalendar: yes
-          plugin_isocalendar_duration: half-year
-
-          plugin_repositories: yes
-          plugin_repositories_featured: >-
-            DhiranReddy/atlas-engineering-case-study,
-            DhiranReddy/vector-daily-engineering-case-study
-
-          plugin_languages: yes
-          plugin_languages_limit: 8
-          plugin_languages_threshold: 0%
-          plugin_languages_other: yes
-          plugin_languages_sections: most-used, recently-used
-          plugin_languages_details: percentage
-
-          plugin_lines: yes
-          plugin_lines_history_limit: 1
-          plugin_lines_repositories_limit: 4
-          plugin_lines_sections: base
+      - uses: actions/checkout@v4
+      - name: Generate custom live engineering dashboard
+        env:
+          METRICS_TOKEN: ${{ secrets.METRICS_TOKEN }}
+          GITHUB_USER: DhiranReddy
+        run: node scripts/generate-profile.mjs
+      - name: Publish updated dashboard
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add github-metrics.svg
+          git diff --cached --quiet || git commit -m "chore: refresh live profile dashboard"
+          git push
 
