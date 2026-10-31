@@ -30,27 +30,21 @@ jobs:
           config_animations: yes
           config_twemoji: yes
           config_octicon: yes
-          config_order: base.header, pagespeed, isocalendar, habits, repositories, languages, topics
+          config_order: base.header, pagespeed, isocalendar, repositories, languages, lines, base.activity+community+repositories+metadata
           base: header, activity, community, repositories, metadata
           base_indepth: yes
           repositories_forks: yes
           plugins_errors_fatal: no
 
-          plugin_pagespeed: yes
+          # Hide this module until PAGESPEED_TOKEN exists instead of publishing
+          # an API quota error in the profile image.
+          plugin_pagespeed: ${{ secrets.PAGESPEED_TOKEN != '' }}
           plugin_pagespeed_url: https://dhiranreddy.cyou
           plugin_pagespeed_token: ${{ secrets.PAGESPEED_TOKEN }}
           plugin_pagespeed_detailed: yes
 
           plugin_isocalendar: yes
           plugin_isocalendar_duration: half-year
-
-          plugin_habits: yes
-          plugin_habits_from: 500
-          plugin_habits_days: 30
-          plugin_habits_facts: yes
-          plugin_habits_charts: yes
-          plugin_habits_charts_type: classic
-          plugin_habits_trim: yes
 
           plugin_repositories: yes
           plugin_repositories_featured: >-
@@ -64,8 +58,8 @@ jobs:
           plugin_languages_sections: most-used, recently-used
           plugin_languages_details: percentage
 
-          plugin_topics: yes
-          plugin_topics_mode: icons
-          plugin_topics_sort: stars
-          plugin_topics_limit: 18
+          plugin_lines: yes
+          plugin_lines_history_limit: 1
+          plugin_lines_repositories_limit: 4
+          plugin_lines_sections: base
 
